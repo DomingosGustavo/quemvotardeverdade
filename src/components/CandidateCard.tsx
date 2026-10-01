@@ -10,6 +10,8 @@ export interface CardModel {
   number?: string;
   party: string;
   photo?: string | null;
+  /** Fotos alternativas, na ordem de preferência (a primeira que carregar é usada). */
+  photos?: string[];
   votes: number;
   curated: number;
   curatedBase?: string;
@@ -50,7 +52,7 @@ export function CandidateCard({
     <article className={cx("card overflow-hidden transition-shadow", open && "shadow-lift")}>
       <div className="flex items-start gap-3 p-4 sm:items-center sm:gap-4 sm:p-5">
         <span className="hidden w-7 shrink-0 text-right font-display text-lg text-ink-3 tabular sm:block">{rank}</span>
-        <Avatar name={model.name} color={color} photo={model.photo} size={52} />
+        <Avatar name={model.name} color={color} photo={model.photos ?? (model.photo ? [model.photo] : [])} size={52} />
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
             <h3 className="font-display text-lg leading-tight font-semibold sm:text-xl">{model.name}</h3>

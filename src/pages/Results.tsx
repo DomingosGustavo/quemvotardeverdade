@@ -13,6 +13,7 @@ import {
   type Parliamentarian,
 } from "../lib/data.ts";
 import { href } from "../lib/router.ts";
+import { photoUrl } from "../lib/photos.ts";
 import { decodeAnswers, encodeAnswers, useStore } from "../lib/store.tsx";
 import { CandidateCard, type CardModel } from "../components/CandidateCard.tsx";
 import { Compass, type CompassPoint } from "../components/Compass.tsx";
@@ -420,6 +421,7 @@ function toModel(meta: Meta, c: Candidate, answers: Answers, metric: Metric, car
     number: c.num,
     party: c.p,
     photo: c.parl?.foto,
+    photos: [c.ft ? photoUrl(c.id) : null, c.parl?.foto].filter((u): u is string => !!u),
     votes: s.votes,
     curated: s.curated,
     curatedBase: c.cb,
@@ -439,6 +441,7 @@ function parlModel(meta: Meta, p: Parliamentarian, answers: Answers, metric: Met
     subtitle: `${p.casa === "camara" ? "Deputado(a) federal" : "Senador(a)"} · ${p.uf}${p.cand ? " · candidato(a) em 2026" : ""}`,
     party: p.p,
     photo: p.foto,
+    photos: [p.cand && p.ft ? photoUrl(p.cand) : null, p.foto].filter((u): u is string => !!u),
     votes: s.votes,
     curated: 0,
     ev: p.ev,

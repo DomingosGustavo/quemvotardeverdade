@@ -61,6 +61,8 @@ const rollcallsFile = read<{ atualizadoEm?: string; votacoes: RollCall[] }>("dat
 const votes = read<VoteRow[]>("data/raw/votos.json", []);
 const parls = read<Parl[]>("data/raw/parlamentares.json", []);
 const tse = read<{ dataTSE: string; fonte: string; candidatos: TseCand[] }>("data/raw/candidatos-tse.json");
+// ids com foto oficial já convertida em public/fotos (scripts/fetch-photos.mjs)
+const withPhoto = new Set(read<string[]>("data/raw/fotos.json", []));
 
 const qIds = new Set(questions.map((q) => q.id));
 const rollcalls = rollcallsFile.votacoes.filter((r) => {
@@ -216,6 +218,7 @@ for (const c of tse.candidatos) {
   if (parlOut) out.parl = parlOut;
   if (Object.keys(ev).length) out.ev = ev;
   if (cur?.base) out.cb = cur.base;
+  if (withPhoto.has(c.id)) out.ft = 1;
   byUf.set(c.uf, [...(byUf.get(c.uf) ?? []), out]);
 }
 for (const [uf, list] of byUf) writeFileSync(join(OUT, "cand", `${uf}.json`), JSON.stringify(list));
@@ -236,6 +239,7 @@ for (const p of parls) {
     uf: p.uf,
     foto: p.foto ?? null,
     cand: linkedParl.get(key) ?? null,
+    ...(linkedParl.has(key) && withPhoto.has(linkedParl.get(key)!) ? { ft: 1 } : {}),
     ev: agg.ev,
   });
 }

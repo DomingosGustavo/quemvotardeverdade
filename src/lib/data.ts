@@ -59,6 +59,8 @@ export interface Candidate {
   parl?: { casa: "camara" | "senado"; id: string; nome: string; foto: string | null };
   ev?: Record<string, RawEvidence[]>;
   cb?: string;
+  /** 1 = há foto oficial do TSE em /fotos/{id}.webp */
+  ft?: 1;
 }
 
 export interface Parliamentarian {
@@ -69,6 +71,7 @@ export interface Parliamentarian {
   uf: string;
   foto: string | null;
   cand: string | null;
+  ft?: 1;
   ev: Record<string, RawEvidence[]>;
 }
 

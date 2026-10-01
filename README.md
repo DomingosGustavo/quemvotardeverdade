@@ -17,7 +17,9 @@ npm test           # testes da matemática
 npm run build      # site estático em dist/ (pode ir para qualquer hospedagem estática)
 ```
 
-Os dados já gerados estão em `public/data/`, então o site funciona sem baixar nada.
+Os dados já gerados estão em `public/data/`, então o site funciona sem baixar nada. As fotos (≈33 MB, 20 mil arquivos) não ficam no git: rode `npm run data:fotos` uma vez para baixá-las do TSE; sem elas, o site mostra as iniciais.
+
+> Por que não carregar as fotos direto do TSE? O CDN do TSE responde com `Access-Control-Allow-Origin: *, *` (cabeçalho duplicado), que os navegadores rejeitam. Por isso as fotos são convertidas e servidas localmente.
 
 ## Regerando os dados
 
@@ -29,6 +31,7 @@ npm run data       # = data:votos + data:candidatos + data:build
 |---|---|---|
 | Votos nominais e parlamentares | `scripts/fetch-votes.mjs` | API de Dados Abertos da Câmara e do Senado |
 | Candidaturas 2026 | `scripts/build-candidates.mjs` | Portal de Dados Abertos do TSE (`consulta_cand_2026.zip`) |
+| Fotos das candidaturas | `scripts/fetch-photos.mjs` | TSE (`foto_cand2026_{UF}_div.zip`) → miniaturas WebP em `public/fotos/` |
 | Arquivos do site | `scripts/build-data.ts` | junta tudo usando o mesmo `engine.ts` do navegador |
 
 O CPF que vem na base do TSE e na API da Câmara é usado **apenas** offline, para vincular candidatos a parlamentares. Ele não é publicado em `public/data`.

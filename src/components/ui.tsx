@@ -1,4 +1,4 @@
-import type { ButtonHTMLAttributes, ReactNode } from "react";
+import { useEffect, useState, type ButtonHTMLAttributes, type ReactNode } from "react";
 
 export const cx = (...c: (string | false | null | undefined)[]) => c.filter(Boolean).join(" ");
 
@@ -61,7 +61,16 @@ export function Logo({ className }: { className?: string }) {
   );
 }
 
-export function Avatar({ name, color, photo, size = 48 }: { name: string; color: string; photo?: string | null; size?: number }) {
+/**
+ * Avatar com cadeia de fotos: tenta cada URL em ordem; se todas falharem, mostra as iniciais.
+ * As iniciais ficam por baixo, então nunca aparece ícone de imagem quebrada.
+ */
+export function Avatar({ name, color, photo, size = 48 }: { name: string; color: string; photo?: string | string[] | null; size?: number }) {
+  const sources = (Array.isArray(photo) ? photo : photo ? [photo] : []).filter(Boolean);
+  const key = sources.join("|");
+  const [failed, setFailed] = useState(0);
+  useEffect(() => setFailed(0), [key]);
+  const src = sources[failed];
   const initials = name
     .replace(/^(Dr|Dra|Prof|Professora?|Pastor|Delegad[oa]|Coronel|Capitão|Sargento|Cabo|Escritor|Veterinário)\.?\s+/i, "")
     .split(/\s+/)
@@ -76,14 +85,16 @@ export function Avatar({ name, color, photo, size = 48 }: { name: string; color:
       style={{ width: size, height: size, background: color, fontSize: size * 0.36 }}
     >
       <span>{initials || "?"}</span>
-      {photo && (
+      {src && (
         <img
-          src={photo}
+          key={src}
+          src={src}
           alt=""
           loading="lazy"
+          decoding="async"
           referrerPolicy="no-referrer"
-          className="absolute inset-0 h-full w-full object-cover"
-          onError={(e) => ((e.target as HTMLImageElement).style.display = "none")}
+          className="absolute inset-0 h-full w-full bg-paper-2 object-cover object-top"
+          onError={() => setFailed((f) => f + 1)}
         />
       )}
     </span>
