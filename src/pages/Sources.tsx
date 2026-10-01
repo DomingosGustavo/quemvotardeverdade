@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { useStore } from "../lib/store.tsx";
-import { Chip, cx, SectionTitle } from "../components/ui.tsx";
+import { Chip, cx, REPO_URL, RepoFile, SectionTitle } from "../components/ui.tsx";
 
 function cellColor(x: number) {
   // −1 coral (217,72,59) → 0 neutro (239,235,224) → +1 verde (31,138,91)
@@ -168,9 +168,11 @@ export default function Sources() {
 
       <h2 className="mt-14 text-3xl font-semibold">Como gerar os dados de novo</h2>
       <div className="card mt-4 p-6 font-mono text-sm leading-7">
-        <p className="text-ink-3"># baixa TSE, Câmara e Senado e regera public/data</p>
+        <p className="text-ink-3"># código e instruções: <a className="text-forest underline underline-offset-2" href={REPO_URL} target="_blank" rel="noreferrer">github.com/DomingosGustavo/quemvotardeverdade</a></p>
+        <p>git clone {REPO_URL}.git</p>
+        <p className="mt-2 text-ink-3"># baixa TSE, Câmara e Senado e regera public/data (<RepoFile path="scripts" label="scripts/" />)</p>
         <p>npm run data</p>
-        <p className="mt-2 text-ink-3"># roda os testes da matemática</p>
+        <p className="mt-2 text-ink-3"># roda os testes da matemática (<RepoFile path="src/lib" label="src/lib/*.test.ts" />)</p>
         <p>npm test</p>
       </div>
     </div>

@@ -166,3 +166,22 @@ export function SectionTitle({ eyebrow, title, children }: { eyebrow?: string; t
     </div>
   );
 }
+
+/** Repositório público do projeto. */
+export const REPO_URL = "https://github.com/DomingosGustavo/quemvotardeverdade";
+
+/** Nome de arquivo do repositório como link clicável para o GitHub. */
+export function RepoFile({ path, label, className }: { path: string; label?: string; className?: string }) {
+  return (
+    <a
+      href={`${REPO_URL}/${/\.[a-z]+$/i.test(path) ? "blob" : "tree"}/master/${path}`}
+      target="_blank"
+      rel="noreferrer"
+      title={`Ver ${path} no GitHub`}
+      className={cx("whitespace-nowrap rounded bg-paper-2 px-1.5 font-mono text-[0.9em] text-forest underline decoration-forest/60 decoration-1 underline-offset-[3px] transition-colors hover:bg-forest hover:text-paper hover:no-underline", className)}
+    >
+      {label ?? path}
+      <span aria-hidden="true" className="ml-0.5 text-[0.8em]">↗</span>
+    </a>
+  );
+}

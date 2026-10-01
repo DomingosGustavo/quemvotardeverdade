@@ -1,7 +1,7 @@
 import { useState, type ReactNode } from "react";
 import { agreement, CURATION_RELIABILITY, IMPORTANCE, LIKERT } from "../lib/engine.ts";
 import { useStore } from "../lib/store.tsx";
-import { pct, SectionTitle } from "../components/ui.tsx";
+import { pct, REPO_URL, RepoFile, SectionTitle } from "../components/ui.tsx";
 
 function F({ children }: { children: ReactNode }) {
   return <div className="my-4 overflow-x-auto rounded-xl bg-forest px-5 py-4 font-mono text-[14px] leading-7 text-white">{children}</div>;
@@ -22,7 +22,7 @@ export default function Method() {
   return (
     <div className="mx-auto max-w-3xl px-4 pt-12 sm:px-6">
       <SectionTitle eyebrow="Metodologia" title="Como calculamos a afinidade">
-        Tudo o que está aqui é exatamente o que o código faz (arquivo <code className="rounded bg-paper-2 px-1.5">src/lib/engine.ts</code>,
+        Tudo o que está aqui é exatamente o que o código faz (arquivo <RepoFile path="src/lib/engine.ts" />,
         coberto por testes automatizados). Se você achar um erro, a conta pode ser refeita por qualquer pessoa.
       </SectionTitle>
 
@@ -134,7 +134,7 @@ export default function Method() {
           <ul className="list-disc space-y-2 pl-5">
             <li>Votos nominais existem só para quem está no Congresso. A maioria dos candidatos a deputado herda a posição do partido — e por isso empata.</li>
             <li>Uma votação raramente é idêntica à afirmação do questionário. Cada ligação está explicada, com link, na página de dados; discorde e proponha mudanças.</li>
-            <li>Posições editoriais (partidos sem votação no tema e candidatos curados) são julgamento humano. Elas têm peso menor e estão todas abertas no repositório.</li>
+            <li>Posições editoriais (partidos sem votação no tema e candidatos curados) são julgamento humano. Elas têm peso menor e estão todas abertas no <a className="text-forest underline underline-offset-2" href={REPO_URL} target="_blank" rel="noreferrer">repositório</a>.</li>
             <li>Deputados estaduais não têm votos coletados (cada Assembleia tem um sistema diferente).</li>
             <li>Afinidade não é recomendação de voto: competência, histórico e propostas concretas também importam.</li>
           </ul>
@@ -142,10 +142,10 @@ export default function Method() {
 
         <Section n="8" title="Como auditar">
           <ul className="list-disc space-y-2 pl-5">
-            <li><code>src/lib/engine.ts</code> — todas as fórmulas desta página; <code>engine.test.ts</code> — propriedades verificadas (rode <code>npm test</code>).</li>
-            <li><code>data/rollcalls.json</code> — votações usadas, direção e justificativa.</li>
-            <li><code>data/parties.json</code> e <code>data/curated-candidates.json</code> — todas as posições editoriais.</li>
-            <li><code>npm run data</code> — baixa de novo TSE, Câmara e Senado e regera tudo do zero.</li>
+            <li><RepoFile path="src/lib/engine.ts" /> — todas as fórmulas desta página; <RepoFile path="src/lib/engine.test.ts" label="engine.test.ts" /> — propriedades verificadas (rode <code>npm test</code>).</li>
+            <li><RepoFile path="data/rollcalls.json" /> — votações usadas, direção e justificativa.</li>
+            <li><RepoFile path="data/parties.json" /> e <RepoFile path="data/curated-candidates.json" /> — todas as posições editoriais.</li>
+            <li><code>npm run data</code> (<RepoFile path="package.json" label="package.json" />) — baixa de novo TSE, Câmara e Senado e regera tudo do zero.</li>
           </ul>
           {meta && (
             <p className="text-sm">

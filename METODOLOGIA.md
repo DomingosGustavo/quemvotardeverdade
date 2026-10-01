@@ -123,4 +123,4 @@ nenhuma lista atinge o QE: vagas aos candidatos mais votados   (art. 111)
 ```
 
 Lista = partido isolado ou federação (Lei 14.208/2021); coligações não valem em eleições proporcionais (EC 97/2017).
-O teste `proportional.test.ts` confirma que o algoritmo reproduz as 54 distribuições oficiais de 2022 (deputado federal e estadual/distrital nas 27 UFs), com os dados atualmente publicados pelo TSE.
+O teste [`proportional.test.ts`](src/lib/proportional.test.ts) confirma que o algoritmo reproduz as 54 distribuições oficiais de 2022 (deputado federal e estadual/distrital nas 27 UFs), com os dados atualmente publicados pelo TSE.

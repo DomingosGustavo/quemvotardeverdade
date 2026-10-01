@@ -4,7 +4,7 @@ import { allocate, votesForNextSeat, type ListInput } from "../lib/proportional.
 import { prettyList } from "../lib/lists.ts";
 import { href } from "../lib/router.ts";
 import { useStore } from "../lib/store.tsx";
-import { buttonClass, Chip, cx, Segmented, SectionTitle, Spinner } from "../components/ui.tsx";
+import { buttonClass, Chip, cx, RepoFile, Segmented, SectionTitle, Spinner } from "../components/ui.tsx";
 
 const n = (v: number) => Math.round(v).toLocaleString("pt-BR");
 
@@ -111,7 +111,7 @@ export default function Vote() {
             ))}
           </ol>
           <p className="mt-5 text-sm text-ink-2">
-            O algoritmo está em <code className="rounded bg-paper-2 px-1.5">src/lib/proportional.ts</code>. Os testes conferem que ele
+            O algoritmo está em <RepoFile path="src/lib/proportional.ts" />. Os <RepoFile path="src/lib/proportional.test.ts" label="testes" className="font-sans" /> conferem que ele
             reproduz exatamente as 54 distribuições oficiais de 2022 (deputados federais e estaduais/distritais das 27 UFs), segundo os
             dados atuais do TSE.
           </p>
