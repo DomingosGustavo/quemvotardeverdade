@@ -64,9 +64,25 @@ if (!entry) throw new Error("arquivo consulta_cand_2026_BRASIL.csv não encontra
 const text = new TextDecoder("latin1").decode(entry());
 const rows = parseCsv(text);
 
+// Quem é eleito junto com o titular: vice (presidente/governador) e suplentes (senador).
+// Usam o mesmo número de urna do titular na mesma circunscrição.
+const COMPANHEIROS = { 2: [1, "Vice-presidente"], 4: [3, "Vice-governador"], 9: [5, "1º suplente"], 10: [5, "2º suplente"] };
+const companheiros = [];
 const out = [];
 for (const r of rows) {
   const cargo = Number(r.CD_CARGO);
+  if (COMPANHEIROS[cargo]) {
+    const [titular, papel] = COMPANHEIROS[cargo];
+    companheiros.push({
+      titular,
+      uf: titular === 1 ? "BR" : r.SG_UF,
+      numero: r.NR_CANDIDATO,
+      papel,
+      nomeUrna: titleCase(r.NM_URNA_CANDIDATO),
+      partido: r.SG_PARTIDO,
+    });
+    continue;
+  }
   if (!CARGOS[cargo]) continue;
   out.push({
     id: r.SQ_CANDIDATO,
@@ -87,6 +103,6 @@ for (const r of rows) {
   });
 }
 out.sort((a, b) => a.uf.localeCompare(b.uf) || a.cargo - b.cargo || a.nomeUrna.localeCompare(b.nomeUrna, "pt-BR"));
-await writeFile(OUT, JSON.stringify({ geradoEm: new Date().toISOString(), fonte: URL_ZIP, dataTSE: rows[0]?.DT_GERACAO, candidatos: out }));
+await writeFile(OUT, JSON.stringify({ geradoEm: new Date().toISOString(), fonte: URL_ZIP, dataTSE: rows[0]?.DT_GERACAO, candidatos: out, companheiros }));
 const porCargo = Object.fromEntries(Object.entries(CARGOS).map(([k, v]) => [v, out.filter((c) => c.cargo === Number(k)).length]));
 console.log(`✓ ${out.length} candidaturas →`, OUT, porCargo);

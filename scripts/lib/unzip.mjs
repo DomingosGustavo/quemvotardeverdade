@@ -30,3 +30,46 @@ export function unzip(buffer) {
   }
   return files; // Map<name, () => Buffer>
 }
+
+/**
+ * Lista as entradas de um .zip em disco e devolve um stream (descomprimido) para cada uma,
+ * sem carregar o arquivo inteiro na memória. Útil para os CSVs de vários GB do TSE.
+ */
+import { open } from "node:fs/promises";
+import { createReadStream } from "node:fs";
+import { createInflateRaw } from "node:zlib";
+
+export async function zipEntries(path) {
+  const fh = await open(path, "r");
+  const { size } = await fh.stat();
+  const tailLen = Math.min(size, 65557);
+  const tail = Buffer.alloc(tailLen);
+  await fh.read(tail, 0, tailLen, size - tailLen);
+  let eocd = -1;
+  for (let i = tail.length - 22; i >= 0; i--) if (tail.readUInt32LE(i) === 0x06054b50) { eocd = i; break; }
+  if (eocd < 0) throw new Error("ZIP inválido");
+  const cdSize = tail.readUInt32LE(eocd + 12);
+  const cdOffset = tail.readUInt32LE(eocd + 16);
+  const cd = Buffer.alloc(cdSize);
+  await fh.read(cd, 0, cdSize, cdOffset);
+  const entries = new Map();
+  for (let p = 0; p + 46 <= cd.length; ) {
+    const method = cd.readUInt16LE(p + 10);
+    const compSize = cd.readUInt32LE(p + 20);
+    const nameLen = cd.readUInt16LE(p + 28), extraLen = cd.readUInt16LE(p + 30), commentLen = cd.readUInt16LE(p + 32);
+    const offset = cd.readUInt32LE(p + 42);
+    const name = cd.subarray(p + 46, p + 46 + nameLen).toString("utf8");
+    entries.set(name, { method, compSize, offset });
+    p += 46 + nameLen + extraLen + commentLen;
+  }
+  async function stream(name) {
+    const e = entries.get(name);
+    if (!e) throw new Error(`entrada ausente: ${name}`);
+    const lh = Buffer.alloc(30);
+    await fh.read(lh, 0, 30, e.offset);
+    const start = e.offset + 30 + lh.readUInt16LE(26) + lh.readUInt16LE(28);
+    const raw = createReadStream(path, { start, end: start + e.compSize - 1 });
+    return e.method === 0 ? raw : raw.pipe(createInflateRaw());
+  }
+  return { names: [...entries.keys()], stream, close: () => fh.close() };
+}

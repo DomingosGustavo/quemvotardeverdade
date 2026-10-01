@@ -60,7 +60,13 @@ const curated = read<any>("data/curated-candidates.json");
 const rollcallsFile = read<{ atualizadoEm?: string; votacoes: RollCall[] }>("data/rollcalls.json", { votacoes: [] });
 const votes = read<VoteRow[]>("data/raw/votos.json", []);
 const parls = read<Parl[]>("data/raw/parlamentares.json", []);
-const tse = read<{ dataTSE: string; fonte: string; candidatos: TseCand[] }>("data/raw/candidatos-tse.json");
+interface Companheiro { titular: number; uf: string; numero: string; papel: string; nomeUrna: string; partido: string }
+const tse = read<{ dataTSE: string; fonte: string; candidatos: TseCand[]; companheiros?: Companheiro[] }>("data/raw/candidatos-tse.json");
+const companions = new Map<string, Companheiro[]>();
+for (const c of tse.companheiros ?? []) {
+  const k = `${c.titular}:${c.uf}:${c.numero}`;
+  companions.set(k, [...(companions.get(k) ?? []), c].sort((a, b) => a.papel.localeCompare(b.papel)));
+}
 // ids com foto oficial já convertida em public/fotos (scripts/fetch-photos.mjs)
 const withPhoto = new Set(read<string[]>("data/raw/fotos.json", []));
 
@@ -219,6 +225,18 @@ for (const c of tse.candidatos) {
   if (Object.keys(ev).length) out.ev = ev;
   if (cur?.base) out.cb = cur.base;
   if (withPhoto.has(c.id)) out.ft = 1;
+  const jt = companions.get(`${c.cargo}:${c.uf}:${c.numero}`);
+  if (jt) {
+    // Agrupa por papel. Mais de um nome no mesmo papel = mais de um registro no TSE (ex.: substituição);
+    // como a base aberta não traz a situação do registro, mostramos todos e avisamos.
+    const roles = new Map<string, { n: string; p: string }[]>();
+    for (const j of jt) {
+      const list = roles.get(j.papel) ?? [];
+      if (!list.some((x) => x.n === j.nomeUrna) && j.nomeUrna !== c.nomeUrna) list.push({ n: j.nomeUrna, p: canonParty(j.partido) });
+      roles.set(j.papel, list);
+    }
+    out.jt = [...roles].map(([r, people]) => ({ r, ps: people }));
+  }
   byUf.set(c.uf, [...(byUf.get(c.uf) ?? []), out]);
 }
 for (const [uf, list] of byUf) writeFileSync(join(OUT, "cand", `${uf}.json`), JSON.stringify(list));
@@ -252,6 +270,12 @@ const meta = {
   votacoesAtualizadasEm: rollcallsFile.atualizadoEm ?? null,
   stats: { votosUsados: usedVotes, parlamentaresComVotos: parlOut.length, candidatosVinculados: linked, candidatosComVotos: withVotes },
   questions,
+  federacoes: [...new Map(
+    tse.candidatos
+      .filter((c) => c.federacao)
+      .map((c) => [c.federacao!, [...new Set(tse.candidatos.filter((x) => x.federacao === c.federacao).map((x) => canonParty(x.partido)))].sort()] as const),
+  )].map(([nome, partidos]) => ({ nome, partidos })),
+  aliases: partiesCfg.aliases ?? {},
   rollcalls: rollcalls.map((r, i) => ({ i, ...r })),
   parties: partiesOut,
   ufs: [...byUf.keys()].sort(),

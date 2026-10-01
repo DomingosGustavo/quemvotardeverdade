@@ -107,3 +107,20 @@ Cada pergunta tem `eixo ∈ {economico, social, null}` e `sinal ∈ {−1, +1}`.
 - Estimativas editoriais ([`data/parties.json`](data/parties.json), [`data/curated-candidates.json`](data/curated-candidates.json)) são julgamento humano, com peso menor, abertas a correção.
 - Assembleias Legislativas não são cobertas.
 - Afinidade não é recomendação de voto.
+
+## 9. Distribuição de cadeiras (eleições proporcionais)
+
+Implementada em [`src/lib/proportional.ts`](src/lib/proportional.ts), seguindo o Código Eleitoral:
+
+```
+QE  = votos válidos / vagas            (fração ≤ 0,5 desprezada; > 0,5 arredonda para cima — art. 106)
+QP  = floor(votos da lista / QE)       (art. 107)
+vagas pelo QP = min(QP, candidatos da lista com ≥ 10% do QE)   (art. 108)
+sobras, 1ª rodada: maior média votos/(cadeiras+1) entre listas com ≥ 80% do QE
+                   cujo próximo candidato tenha ≥ 20% do QE    (art. 109, I–II)
+sobras, rodada final: maior média entre todas as listas        (art. 109, III, conforme STF, ADIs 7228/7263/7325)
+nenhuma lista atinge o QE: vagas aos candidatos mais votados   (art. 111)
+```
+
+Lista = partido isolado ou federação (Lei 14.208/2021); coligações não valem em eleições proporcionais (EC 97/2017).
+O teste `proportional.test.ts` confirma que o algoritmo reproduz as 54 distribuições oficiais de 2022 (deputado federal e estadual/distrital nas 27 UFs), com os dados atualmente publicados pelo TSE.

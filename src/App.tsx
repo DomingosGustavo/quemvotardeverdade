@@ -8,10 +8,12 @@ import Results from "./pages/Results.tsx";
 import Method from "./pages/Method.tsx";
 import Sources from "./pages/Sources.tsx";
 import Cola from "./pages/Cola.tsx";
+import Vote from "./pages/Vote.tsx";
 
 const NAV = [
   { to: "/quiz", label: "Questionário" },
   { to: "/resultado", label: "Resultado" },
+  { to: "/voto", label: "Como seu voto conta" },
   { to: "/metodo", label: "Como calculamos" },
   { to: "/dados", label: "Dados" },
   { to: "/cola", label: "Minha cola" },
@@ -28,6 +30,7 @@ export default function App() {
       "/metodo": "Como calculamos",
       "/dados": "Dados e fontes",
       "/cola": "Minha cola",
+      "/voto": "Como seu voto conta",
     };
     document.title = `${titles[route.path] ? titles[route.path] + " · " : ""}Quem Votar de Verdade`;
   }, [route.path]);
@@ -51,6 +54,9 @@ export default function App() {
         break;
       case "/cola":
         page = <Cola />;
+        break;
+      case "/voto":
+        page = <Vote />;
         break;
       default:
         page = <Home />;

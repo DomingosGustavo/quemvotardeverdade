@@ -5,6 +5,7 @@ import {
   evidenceSummary,
   loadCandidates,
   loadParliamentarians,
+  loadProportional,
   partyPositions,
   positionsFor,
   UF_NOMES,
@@ -15,7 +16,8 @@ import {
 import { href } from "../lib/router.ts";
 import { photoUrl } from "../lib/photos.ts";
 import { decodeAnswers, encodeAnswers, useStore } from "../lib/store.tsx";
-import { CandidateCard, type CardModel } from "../components/CandidateCard.tsx";
+import { CandidateCard, type CardModel, type ListContext } from "../components/CandidateCard.tsx";
+import { elected2022, listKeyOf, listParties, prettyList } from "../lib/lists.ts";
 import { Compass, type CompassPoint } from "../components/Compass.tsx";
 import { Button, buttonClass, cx, pct, Segmented, Spinner } from "../components/ui.tsx";
 
@@ -218,6 +220,31 @@ function CandidateList({ meta, answers, metric, tab, uf, userXY, settings }: { m
   }, [data, cargoCode, answers, metric, meta, cargoLabel]);
 
   const parties = useMemo(() => partyRanking(meta, models.map((m) => m.party), answers, metric), [meta, models, answers, metric]);
+  const proportionalCargo = cargoCode >= 6;
+  const prop = useAsync(() => (proportionalCargo ? loadProportional() : Promise.resolve(null)), [proportionalCargo]);
+  const lists = useMemo(() => {
+    const out = new Map<string, ListContext>();
+    if (!proportionalCargo) return out;
+    for (const m of models) {
+      const key = m.listKey ?? m.party;
+      let l = out.get(key);
+      if (!l) {
+        const ps = listParties(meta, key);
+        l = {
+          key,
+          label: prettyList(key),
+          parties: ps,
+          members: [],
+          elected2022: prop.data ? elected2022(meta, prop.data, cargoCode, uf, ps) : null,
+          cargoLabel: cargoCode === 6 ? "deputado federal" : cargoCode === 8 ? "deputado distrital" : "deputado estadual",
+          ufName: UF_NOMES[uf],
+        };
+        out.set(key, l);
+      }
+      l.members.push(m);
+    }
+    return out;
+  }, [models, proportionalCargo, meta, prop.data, cargoCode, uf]);
 
   if (loading) return <Spinner label="Carregando candidaturas do TSE…" />;
   if (error) return <p className="text-disagree">{error}</p>;
@@ -252,11 +279,31 @@ function CandidateList({ meta, answers, metric, tab, uf, userXY, settings }: { m
       }
       main={
         <>
+      {proportional && (
+        <div className="rounded-[20px] border border-gold bg-gold-2/40 p-5 sm:p-6">
+          <p className="font-display text-xl font-semibold">Seu voto para deputado elege mais gente do que você imagina</p>
+          <p className="mt-2 text-sm leading-relaxed text-ink-2">
+            Primeiro, os votos de todos os candidatos de um partido ou federação são somados e definem quantas cadeiras a lista ganha
+            {prop.data?.r2022[String(cargoCode)]?.[uf] && prop.data.vagas2026[String(cargoCode)]?.[uf] && (
+              <>
+                {" "}(em 2022, aqui, cada cadeira custou cerca de{" "}
+                <strong>
+                  {Math.round(prop.data.r2022[String(cargoCode)][uf].validos / prop.data.vagas2026[String(cargoCode)][uf]).toLocaleString("pt-BR")}
+                </strong>{" "}
+                votos)
+              </>
+            )}
+            . Só depois as cadeiras vão para os mais votados da lista. Em cada candidato abaixo, veja quem mais seu voto pode ajudar a eleger.
+          </p>
+          <a href={href("/voto")} className={buttonClass("secondary", "sm") + " mt-3"}>Como funciona o quociente eleitoral →</a>
+        </div>
+      )}
+
       {proportional && parties.length > 0 && (
         <div className="card p-5 sm:p-6">
           <div className="flex flex-wrap items-baseline justify-between gap-2">
             <p className="font-display text-xl font-semibold">Partidos mais próximos</p>
-            <p className="text-xs text-ink-3">eleição proporcional: seu voto conta primeiro para o partido/federação</p>
+            <a href={href("/voto")} className="text-xs font-medium text-sky hover:underline">eleição proporcional: seu voto conta primeiro para o partido/federação →</a>
           </div>
           <div className="mt-4 grid gap-x-8 gap-y-2.5 sm:grid-cols-2">
             {parties.slice(0, 10).map((p, i) => (
@@ -304,6 +351,7 @@ function CandidateList({ meta, answers, metric, tab, uf, userXY, settings }: { m
             model={mm}
             rank={i + 1}
             meta={meta}
+            list={lists.get(mm.listKey ?? mm.party)}
             action={
               <button
                 onClick={() => toggleCola({ id: mm.key, cargo: cargoCode, uf, nome: mm.name, numero: mm.number ?? "", partido: mm.party })}
@@ -422,6 +470,8 @@ function toModel(meta: Meta, c: Candidate, answers: Answers, metric: Metric, car
     party: c.p,
     photo: c.parl?.foto,
     photos: [c.ft ? photoUrl(c.id) : null, c.parl?.foto].filter((u): u is string => !!u),
+    companions: c.jt,
+    listKey: listKeyOf(c),
     votes: s.votes,
     curated: s.curated,
     curatedBase: c.cb,

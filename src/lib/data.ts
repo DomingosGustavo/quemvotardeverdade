@@ -38,6 +38,8 @@ export interface Meta {
   votacoesAtualizadasEm: string | null;
   stats: { votosUsados: number; parlamentaresComVotos: number; candidatosVinculados: number; candidatosComVotos: number };
   questions: Question[];
+  federacoes: { nome: string; partidos: string[] }[];
+  aliases: Record<string, string[]>;
   rollcalls: RollCall[];
   parties: Record<string, Party>;
   ufs: string[];
@@ -61,6 +63,8 @@ export interface Candidate {
   cb?: string;
   /** 1 = há foto oficial do TSE em /fotos/{id}.webp */
   ft?: 1;
+  /** Quem é eleito junto: vice (presidente/governador) ou suplentes (senador). */
+  jt?: { r: string; ps: { n: string; p: string }[] }[];
 }
 
 export interface Parliamentarian {
@@ -108,6 +112,34 @@ function getJson<T>(path: string): Promise<T> {
 export const loadMeta = () => getJson<Meta>("meta.json");
 export const loadCandidates = (uf: string) => getJson<Candidate[]>(`cand/${uf}.json`);
 export const loadParliamentarians = () => getJson<Parliamentarian[]>("parlamentares.json");
+export const loadProportional = () => getJson<ProportionalData>("proporcional.json");
+
+export interface ProportionalList2022 {
+  id: string;
+  nome: string;
+  partidos: string[];
+  votos: number;
+  legenda: number;
+  /** votos dos candidatos com ≥ 1% do QE, em ordem decrescente */
+  cv: number[];
+  /** total de candidatos da lista */
+  nc: number;
+  eleitos: { n: string; p: string; v: number; s: "qp" | "media" }[];
+  top: { n: string; p: string; v: number }[];
+}
+
+export interface ProportionalData {
+  vagas2026: Record<string, Record<string, number>>;
+  r2022: Record<string, Record<string, {
+    aptos: number;
+    comparecimento: number;
+    validos: number;
+    brancos: number;
+    nulos: number;
+    legenda: number;
+    listas: ProportionalList2022[];
+  }>>;
+}
 
 const VOTE_LABEL: Record<Vote, string> = { sim: "SIM", nao: "NÃO", abstencao: "ABSTENÇÃO", obstrucao: "OBSTRUÇÃO", outro: "OUTRO" };
 

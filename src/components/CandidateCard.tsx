@@ -19,6 +19,21 @@ export interface CardModel {
   includeParty: boolean;
   result: MatchResult;
   positions: Record<string, Estimate>;
+  /** Vice ou suplentes eleitos junto (cargos majoritários). */
+  companions?: { r: string; ps: { n: string; p: string }[] }[];
+  /** Chave da lista proporcional (federação ou partido). */
+  listKey?: string;
+}
+
+/** Contexto da lista proporcional do candidato (partido isolado ou federação). */
+export interface ListContext {
+  key: string;
+  label: string;
+  parties: string[];
+  members: CardModel[];
+  elected2022: number | null;
+  cargoLabel: string;
+  ufName: string;
 }
 
 export function nearestLabel(x: number) {
@@ -32,11 +47,13 @@ export function CandidateCard({
   rank,
   meta,
   action,
+  list,
 }: {
   model: CardModel;
   rank: number;
   meta: Meta;
   action?: React.ReactNode;
+  list?: ListContext;
 }) {
   const [open, setOpen] = useState(false);
   const party = meta.parties[model.party];
@@ -79,6 +96,9 @@ export function CandidateCard({
           </p>
         </div>
       </div>
+
+      {model.companions && model.companions.length > 0 && <Companions companions={model.companions} meta={meta} />}
+      {list && <ListBand list={list} model={model} meta={meta} />}
 
       <div className="flex items-center justify-between gap-2 border-t border-line/70 bg-paper/40 px-4 py-2 sm:px-5">
         <div className="min-w-0 truncate text-xs text-ink-2">
@@ -183,6 +203,111 @@ function QuestionRow({ qa, meta, model, color }: { qa: QuestionAgreement; meta: 
       <p className={cx("w-14 text-right font-display text-xl font-semibold tabular", tone)} title="Concordância esperada neste tema">
         {pct(qa.expected)}
       </p>
+    </div>
+  );
+}
+
+function Companions({ companions, meta }: { companions: NonNullable<CardModel["companions"]>; meta: Meta }) {
+  const ambiguous = companions.some((c) => c.ps.length > 1);
+  return (
+    <div className="flex flex-wrap items-center gap-x-4 gap-y-1 border-t border-line/70 px-4 py-2.5 text-xs sm:px-5">
+      <span className="font-semibold text-ink-2">Eleito(a) junto:</span>
+      {companions.map((c) => (
+        <span key={c.r} className="text-ink-2">
+          <span className="text-ink-3">{c.r}:</span>{" "}
+          {c.ps.map((p, i) => (
+            <span key={p.n}>
+              {i > 0 && <span className="text-ink-3"> ou </span>}
+              <strong className="font-semibold text-ink">{p.n}</strong>{" "}
+              <span style={{ color: meta.parties[p.p]?.cor }}>({p.p})</span>
+            </span>
+          ))}
+        </span>
+      ))}
+      {ambiguous && (
+        <span className="text-ink-3" title="A base aberta do TSE traz mais de um registro para esta vaga (provável substituição) e não informa qual está valendo.">
+          · há mais de um registro no TSE; confira em divulgacandcontas.tse.jus.br
+        </span>
+      )}
+    </div>
+  );
+}
+
+function ListBand({ list, model, meta }: { list: ListContext; model: CardModel; meta: Meta }) {
+  const [open, setOpen] = useState(false);
+  const others = list.members.filter((m) => m.key !== model.key);
+  const scores = list.members.map((m) => m.result.score);
+  const min = Math.min(...scores), max = Math.max(...scores);
+  const withRecord = others.filter((m) => m.votes + m.curated > 0).sort((a, b) => b.result.score - a.result.score);
+  // candidatos sem histórico próprio: todos do mesmo partido têm a mesma afinidade
+  const byParty = new Map<string, CardModel[]>();
+  for (const m of others) if (m.votes + m.curated === 0) byParty.set(m.party, [...(byParty.get(m.party) ?? []), m]);
+  const isFed = list.parties.length > 1;
+  const Row = ({ m }: { m: CardModel }) => (
+    <li className="flex items-center gap-2">
+      <span className={cx("w-10 shrink-0 text-right font-semibold tabular", scoreTone(m.result.score))}>{pct(m.result.score)}</span>
+      <span className="min-w-0 truncate">
+        {m.name} <span className="text-ink-3">({m.party}{m.number ? ` · ${m.number}` : ""})</span>
+      </span>
+    </li>
+  );
+  return (
+    <div className="border-t border-line/70 bg-gold-2/25 px-4 py-2.5 text-xs sm:px-5">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <p className="text-ink-2">
+          Seu voto também conta para a lista <strong className="text-ink">{list.label}</strong>
+          {isFed && <> ({list.parties.join(", ")})</>}: {list.members.length} candidatos, com afinidade de{" "}
+          <strong className="text-ink">{pct(min)}</strong> a <strong className="text-ink">{pct(max)}</strong> com você.
+        </p>
+        <button onClick={() => setOpen((o) => !o)} className="shrink-0 font-medium text-forest-2 hover:underline cursor-pointer" aria-expanded={open}>
+          {open ? "Fechar" : "Quem mais seu voto pode eleger"} ▾
+        </button>
+      </div>
+      {open && (
+        <div className="animate-fade mt-3 space-y-3 pb-1 text-[13px]">
+          <p className="text-ink-2">
+            Votando em {model.name}, você aumenta o total da lista{isFed ? " — que reúne todos os partidos da federação" : ""}. As cadeiras que a
+            lista ganhar vão para os seus candidatos mais votados, que podem não ser {model.name}.
+            {list.elected2022 !== null && (
+              <>
+                {" "}Em 2022, {isFed ? "esses partidos elegeram" : "este partido elegeu"} {list.elected2022}{" "}
+                {list.elected2022 === 1 ? list.cargoLabel : list.cargoLabel.replace("deputado", "deputados").replace("federal", "federais").replace("estadual", "estaduais").replace("distrital", "distritais")}{" "}
+                em {list.ufName}.
+              </>
+            )}{" "}
+            <a href="#/voto" className="font-medium text-sky hover:underline">Entenda a regra →</a>
+          </p>
+          {withRecord.length > 0 && withRecord.length <= 6 && (
+            <div>
+              <p className="mb-1 font-semibold text-ink">Outros candidatos da lista com histórico de votos</p>
+              <ul className="grid gap-1 sm:grid-cols-2">{withRecord.map((m) => <Row key={m.key} m={m} />)}</ul>
+            </div>
+          )}
+          {withRecord.length > 6 && (
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div>
+                <p className="mb-1 font-semibold text-agree">Mais alinhados a você (com histórico)</p>
+                <ul className="space-y-1">{withRecord.slice(0, 5).map((m) => <Row key={m.key} m={m} />)}</ul>
+              </div>
+              <div>
+                <p className="mb-1 font-semibold text-disagree">Menos alinhados a você (com histórico)</p>
+                <ul className="space-y-1">{withRecord.slice(-Math.min(5, withRecord.length - 5)).reverse().map((m) => <Row key={m.key} m={m} />)}</ul>
+              </div>
+            </div>
+          )}
+          {byParty.size > 0 && (
+            <p className="text-ink-3">
+              Sem histórico próprio (usam a posição do partido):{" "}
+              {[...byParty].map(([p, ms], i) => (
+                <span key={p}>
+                  {i > 0 && " · "}
+                  <span style={{ color: meta.parties[p]?.cor }} className="font-semibold">{p}</span> {ms.length} candidatos, {pct(ms[0].result.score)}
+                </span>
+              ))}
+            </p>
+          )}
+        </div>
+      )}
     </div>
   );
 }
