@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // Baixa os arquivos oficiais de fotos das candidaturas (TSE, um .zip por UF),
-// gera miniaturas WebP em public/fotos/{SQ_CANDIDATO}.webp e a lista
+// gera miniaturas WebP em data/raw/fotos/{SQ_CANDIDATO}.webp e a lista
 // data/raw/fotos.json com os ids que têm foto (usada por build-data.ts).
 //
 // Por que não ler as fotos direto do TSE no navegador? O CDN do TSE responde com
@@ -18,7 +18,7 @@ import { unzip } from "./lib/unzip.mjs";
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const BASE = "https://cdn.tse.jus.br/estatistica/sead/eleicoes/eleicoes2026/fotos/foto_cand2026_";
 const CACHE = join(ROOT, "data/raw/tse/fotos");
-const OUT = join(ROOT, "public/fotos");
+const OUT = join(ROOT, "data/raw/fotos");
 const refresh = process.argv.includes("--refresh");
 
 const { candidatos } = JSON.parse(await readFile(join(ROOT, "data/raw/candidatos-tse.json"), "utf8"));
@@ -82,4 +82,4 @@ for (const [uf, ids] of [...byUf].sort()) {
 }
 
 await writeFile(join(ROOT, "data/raw/fotos.json"), JSON.stringify(withPhoto));
-console.log(`✓ ${withPhoto.length} fotos disponíveis (${written} miniaturas novas) em public/fotos/`);
+console.log(`✓ ${withPhoto.length} fotos disponíveis (${written} miniaturas novas) em data/raw/fotos/`);

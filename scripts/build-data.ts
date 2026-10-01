@@ -71,6 +71,7 @@ for (const c of tse.companheiros ?? []) {
 const withPhoto = new Set(read<string[]>("data/raw/fotos.json", []));
 
 const qIds = new Set(questions.map((q) => q.id));
+for (const r of rollcallsFile.votacoes) if (r.url && !r.url.startsWith("https://")) throw new Error(`URL não-https em rollcalls.json: ${r.url}`);
 const rollcalls = rollcallsFile.votacoes.filter((r) => {
   if (!qIds.has(r.questao)) console.warn(`! votação ${r.casa}:${r.id} aponta para pergunta inexistente ${r.questao}`);
   return qIds.has(r.questao);
@@ -239,6 +240,49 @@ for (const c of tse.candidatos) {
   }
   byUf.set(c.uf, [...(byUf.get(c.uf) ?? []), out]);
 }
+// ------------------------------------------------------------ pacotes de fotos
+// As ~20 mil miniaturas viram ~1.250 pacotes (UF + cargo [+ partido, nos proporcionais], até 48 fotos cada), servidos como
+// arquivos estáticos (grátis e ilimitados na Cloudflare). Candidatos empatados do mesmo partido aparecem
+// juntos no ranking, então uma página de resultados costuma precisar de 1 a 3 pacotes.
+const PHOTO_DIR = join(ROOT, "data/raw/fotos");
+const PACK_DIR = join(ROOT, "public/fp");
+const packOf = new Map<string, [string, number, number]>();
+if (existsSync(PHOTO_DIR)) {
+  rmSync(PACK_DIR, { recursive: true, force: true });
+  mkdirSync(PACK_DIR, { recursive: true });
+  let packs = 0;
+  for (const [uf, list] of byUf) {
+    const groups = new Map<string, any[]>();
+    // cargos majoritários têm poucos candidatos: um pacote por cargo; proporcionais: por partido
+    const groupKey = (c: any) => (c.c <= 5 ? `${c.c}` : `${c.c}:${c.p}`);
+    for (const c of list) if (c.ft) groups.set(groupKey(c), [...(groups.get(groupKey(c)) ?? []), c]);
+    let n = 0;
+    for (const members of groups.values()) {
+      members.sort((a, b) => a.u.localeCompare(b.u, "pt-BR"));
+      for (let i = 0; i < members.length; i += 48) {
+        const name = `${uf}-${n++}`;
+        const parts: Buffer[] = [];
+        let offset = 0;
+        for (const c of members.slice(i, i + 48)) {
+          const f = join(PHOTO_DIR, `${c.id}.webp`);
+          if (!existsSync(f)) continue;
+          const buf = readFileSync(f);
+          c.ph = [name, offset, buf.length];
+          packOf.set(c.id, c.ph);
+          parts.push(buf);
+          offset += buf.length;
+        }
+        writeFileSync(join(PACK_DIR, `${name}.bin`), Buffer.concat(parts));
+        packs++;
+      }
+    }
+  }
+  console.log(`· ${packOf.size} fotos em ${packs} pacotes (public/fp)`);
+} else {
+  console.warn("! data/raw/fotos não existe — rode `npm run data:fotos` para incluir as fotos");
+}
+for (const list of byUf.values()) for (const c of list) delete c.ft;
+
 for (const [uf, list] of byUf) writeFileSync(join(OUT, "cand", `${uf}.json`), JSON.stringify(list));
 // remove arquivos de UFs que não existem mais (sem apagar a pasta, para não atrapalhar o servidor de dev)
 for (const f of readdirSync(join(OUT, "cand"))) if (!byUf.has(f.replace(/\.json$/, ""))) rmSync(join(OUT, "cand", f));
@@ -257,7 +301,7 @@ for (const p of parls) {
     uf: p.uf,
     foto: p.foto?.replace(/^http:/, "https:") ?? null,
     cand: linkedParl.get(key) ?? null,
-    ...(linkedParl.has(key) && withPhoto.has(linkedParl.get(key)!) ? { ft: 1 } : {}),
+    ...(linkedParl.has(key) && packOf.has(linkedParl.get(key)!) ? { ph: packOf.get(linkedParl.get(key)!) } : {}),
     ev: agg.ev,
   });
 }

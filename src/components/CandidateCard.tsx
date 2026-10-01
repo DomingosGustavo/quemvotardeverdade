@@ -2,6 +2,7 @@ import { useState } from "react";
 import { LIKERT, type Estimate, type MatchResult, type QuestionAgreement } from "../lib/engine.ts";
 import { evidenceFor, type Meta, type RawEvidence } from "../lib/data.ts";
 import { Avatar, Chip, cx, pct, RangeBar, scoreTone } from "./ui.tsx";
+import { usePackPhoto, type PhotoRef } from "../lib/photos.ts";
 
 export interface CardModel {
   key: string;
@@ -12,6 +13,8 @@ export interface CardModel {
   photo?: string | null;
   /** Fotos alternativas, na ordem de preferência (a primeira que carregar é usada). */
   photos?: string[];
+  /** Foto oficial do TSE dentro de um pacote. */
+  pack?: PhotoRef;
   votes: number;
   curated: number;
   curatedBase?: string;
@@ -56,6 +59,7 @@ export function CandidateCard({
   list?: ListContext;
 }) {
   const [open, setOpen] = useState(false);
+  const packPhoto = usePackPhoto(model.pack);
   const party = meta.parties[model.party];
   const color = party?.cor ?? "#64748b";
   const r = model.result;
@@ -69,7 +73,7 @@ export function CandidateCard({
     <article className={cx("card overflow-hidden transition-shadow", open && "shadow-lift")}>
       <div className="flex items-start gap-3 p-4 sm:items-center sm:gap-4 sm:p-5">
         <span className="hidden w-7 shrink-0 text-right font-display text-lg text-ink-3 tabular sm:block">{rank}</span>
-        <Avatar name={model.name} color={color} photo={model.photos ?? (model.photo ? [model.photo] : [])} size={52} />
+        <Avatar name={model.name} color={color} photo={[...(packPhoto ? [packPhoto] : []), ...(model.photos ?? (model.photo ? [model.photo] : []))]} size={52} />
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
             <h3 className="font-display text-lg leading-tight font-semibold sm:text-xl">{model.name}</h3>

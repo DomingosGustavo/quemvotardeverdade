@@ -14,7 +14,6 @@ import {
   type Parliamentarian,
 } from "../lib/data.ts";
 import { href } from "../lib/router.ts";
-import { photoUrl } from "../lib/photos.ts";
 import { decodeAnswers, encodeAnswers, useStore } from "../lib/store.tsx";
 import { CandidateCard, type CardModel, type ListContext } from "../components/CandidateCard.tsx";
 import { elected2022, listKeyOf, listParties, prettyList } from "../lib/lists.ts";
@@ -90,6 +89,7 @@ export default function Results({ params }: { params: URLSearchParams }) {
           <a href={href("/quiz")} className={buttonClass("secondary", "sm")}>Revisar respostas</a>
           <Button
             size="sm"
+            title="O link contém as suas respostas: só compartilhe se quiser que outras pessoas as vejam."
             onClick={() => {
               navigator.clipboard?.writeText(shareUrl).then(() => {
                 setCopied(true);
@@ -97,7 +97,7 @@ export default function Results({ params }: { params: URLSearchParams }) {
               });
             }}
           >
-            {copied ? "Link copiado ✓" : "Compartilhar"}
+            {copied ? "Link copiado ✓ (inclui suas respostas)" : "Compartilhar"}
           </Button>
         </div>
       </div>
@@ -469,7 +469,8 @@ function toModel(meta: Meta, c: Candidate, answers: Answers, metric: Metric, car
     number: c.num,
     party: c.p,
     photo: c.parl?.foto,
-    photos: [c.ft ? photoUrl(c.id) : null, c.parl?.foto].filter((u): u is string => !!u),
+    pack: c.ph,
+    photos: c.parl?.foto ? [c.parl.foto] : [],
     companions: c.jt,
     listKey: listKeyOf(c),
     votes: s.votes,
@@ -491,7 +492,8 @@ function parlModel(meta: Meta, p: Parliamentarian, answers: Answers, metric: Met
     subtitle: `${p.casa === "camara" ? "Deputado(a) federal" : "Senador(a)"} · ${p.uf}${p.cand ? " · candidato(a) em 2026" : ""}`,
     party: p.p,
     photo: p.foto,
-    photos: [p.cand && p.ft ? photoUrl(p.cand) : null, p.foto].filter((u): u is string => !!u),
+    pack: p.ph,
+    photos: p.foto ? [p.foto] : [],
     votes: s.votes,
     curated: 0,
     ev: p.ev,

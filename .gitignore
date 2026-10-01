@@ -5,6 +5,12 @@ data/raw/
 *.log
 .DS_Store
 *.tsbuildinfo
-# fotos do TSE (geradas por npm run data:fotos)
-public/fotos/
 .wrangler/
+# pacotes de fotos gerados (npm run data:fotos && npm run data:build)
+public/fp/
+# segredos locais
+.env
+.env.*
+.dev.vars*
+*.pem
+*.key

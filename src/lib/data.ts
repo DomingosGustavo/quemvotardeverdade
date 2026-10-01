@@ -61,8 +61,8 @@ export interface Candidate {
   parl?: { casa: "camara" | "senado"; id: string; nome: string; foto: string | null };
   ev?: Record<string, RawEvidence[]>;
   cb?: string;
-  /** 1 = há foto oficial do TSE em /fotos/{id}.webp */
-  ft?: 1;
+  /** Foto oficial do TSE: [pacote, início, tamanho] em /fp/{pacote}.bin */
+  ph?: [string, number, number];
   /** Quem é eleito junto: vice (presidente/governador) ou suplentes (senador). */
   jt?: { r: string; ps: { n: string; p: string }[] }[];
 }
@@ -75,7 +75,7 @@ export interface Parliamentarian {
   uf: string;
   foto: string | null;
   cand: string | null;
-  ft?: 1;
+  ph?: [string, number, number];
   ev: Record<string, RawEvidence[]>;
 }
 
