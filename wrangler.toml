@@ -1,8 +1,16 @@
 # Cloudflare Workers com arquivos estáticos (a nova versão do Cloudflare Pages).
-# O site não tem código de servidor: tudo em dist/ é servido direto da borda, de graça.
-# As fotos ficam no R2 (veja scripts/deploy-cloudflare.mjs).
+# O site não tem código de servidor: tudo em dist/ (app, dados e pacotes de fotos) é servido
+# direto da borda, de graça.
 name = "quemvotardeverdade"
 compatibility_date = "2026-10-01"
+# endereço provisório (*.workers.dev) continua no ar enquanto o DNS propaga
+workers_dev = true
+preview_urls = false
+
+routes = [
+  { pattern = "quemvotardeverdade.com.br", custom_domain = true },
+  { pattern = "www.quemvotardeverdade.com.br", custom_domain = true },
+]
 
 [assets]
 directory = "./dist"
