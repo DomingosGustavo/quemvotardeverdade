@@ -19,6 +19,7 @@
 import { execFileSync } from "node:child_process";
 import { existsSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { homedir } from "node:os";
+import { randomBytes } from "node:crypto";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -86,41 +87,61 @@ if (!skipPhotos) {
   const done = new Set(existsSync(manifestPath) ? JSON.parse(readFileSync(manifestPath, "utf8")) : []);
   const files = readdirSync(dir).filter((f) => f.endsWith(".webp") && !done.has(f));
   step(`Enviando ${files.length} fotos novas (${done.size} já enviadas)`);
-  let sent = 0, failed = 0, i = 0;
-  const started = Date.now();
-  async function worker() {
-    while (i < files.length) {
-      const f = files[i++];
-      for (let attempt = 1; ; attempt++) {
-        try {
-          await api(token, `/accounts/${account.id}/r2/buckets/${BUCKET}/objects/${encodeURIComponent(f)}`, {
-            method: "PUT",
-            headers: { "Content-Type": "image/webp", "Cache-Control": "public, max-age=2592000" },
-            body: readFileSync(join(dir, f)),
-          });
-          done.add(f);
-          sent++;
-          break;
-        } catch (e) {
-          if (String(e).includes(" 401 ")) token = oauthToken();
-          if (attempt >= 5) {
-            failed++;
-            console.warn(`  ! ${f}: ${String(e).slice(0, 160)}`);
+  if (files.length) {
+    // A API REST da Cloudflare limita ~4 req/s; um Worker temporário com acesso ao bucket é ~20× mais rápido.
+    const upDir = join(ROOT, "scripts/r2-uploader");
+    const secret = randomBytes(24).toString("hex");
+    const up = (args, input) =>
+      execFileSync("npx", ["wrangler", ...args], { cwd: upDir, encoding: "utf8", input, env: { ...process.env }, stdio: ["pipe", "pipe", "pipe"] });
+    const deployed = up(["deploy", "--var", `BUCKET_NAME:${BUCKET}`]);
+    up(["secret", "put", "UPLOAD_SECRET"], secret);
+    const upUrl = deployed.match(/https:\/\/\S+\.workers\.dev/)?.[0];
+    if (!upUrl) throw new Error("Não consegui publicar o Worker de upload:\n" + deployed);
+    // espera o endereço ficar disponível
+    for (let t = 0; t < 30; t++) {
+      try { if ((await fetch(upUrl)).status === 403) break; } catch {}
+      await new Promise((r) => setTimeout(r, 3000));
+    }
+    let sent = 0, failed = 0, i = 0;
+    const started = Date.now();
+    async function worker() {
+      while (i < files.length) {
+        const f = files[i++];
+        for (let attempt = 1; ; attempt++) {
+          try {
+            const res = await fetch(`${upUrl}/${encodeURIComponent(f)}`, {
+              method: "PUT",
+              headers: { "x-upload-secret": secret, "Content-Type": "image/webp" },
+              body: readFileSync(join(dir, f)),
+            });
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            done.add(f);
+            sent++;
             break;
+          } catch (e) {
+            if (attempt >= 5) {
+              failed++;
+              console.warn(`  ! ${f}: ${String(e).slice(0, 160)}`);
+              break;
+            }
+            await new Promise((r) => setTimeout(r, 300 * 2 ** attempt));
           }
-          await new Promise((r) => setTimeout(r, 500 * 2 ** attempt));
+        }
+        if ((sent + failed) % 1000 === 0) {
+          writeFileSync(manifestPath, JSON.stringify([...done]));
+          console.log(`  ${sent + failed}/${files.length} (${Math.round((Date.now() - started) / 1000)}s)`);
         }
       }
-      if ((sent + failed) % 500 === 0) {
-        writeFileSync(manifestPath, JSON.stringify([...done]));
-        console.log(`  ${sent + failed}/${files.length} (${Math.round((Date.now() - started) / 1000)}s)`);
-      }
     }
+    try {
+      await Promise.all(Array.from({ length: 48 }, worker));
+    } finally {
+      writeFileSync(manifestPath, JSON.stringify([...done]));
+      try { up(["delete", "--force"]); console.log("  Worker de upload removido"); } catch (e) { console.warn("  ! remova manualmente o Worker quemvotardeverdade-uploader"); }
+    }
+    console.log(`  ✓ ${sent} enviadas, ${failed} falhas`);
+    if (failed) throw new Error("Algumas fotos falharam; rode de novo para reenviar só as que faltam.");
   }
-  await Promise.all(Array.from({ length: 24 }, worker));
-  writeFileSync(manifestPath, JSON.stringify([...done]));
-  console.log(`  ✓ ${sent} enviadas, ${failed} falhas`);
-  if (failed) throw new Error("Algumas fotos falharam; rode de novo para reenviar só as que faltam.");
 
   if (!photoBase) {
     step("Endereço público r2.dev");
