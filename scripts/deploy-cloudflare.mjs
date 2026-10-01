@@ -1,13 +1,14 @@
 #!/usr/bin/env node
 /**
- * Publica o site no Cloudflare Pages e as fotos no Cloudflare R2.
+ * Publica o site no Cloudflare (Workers com arquivos estáticos — a nova versão do Pages)
+ * e as fotos no Cloudflare R2.
  *
  *   npx wrangler login                 # uma vez
  *   npm run deploy                     # build + fotos (só as novas) + Pages
  *   npm run deploy -- --skip-photos    # só o site
  *
  * Variáveis opcionais:
- *   CF_PAGES_PROJECT   (padrão: quemvotardeverdade)
+ *   CF_PAGES_PROJECT   nome do projeto (padrão: quemvotardeverdade)
  *   CF_R2_BUCKET       (padrão: quemvotardeverdade-fotos)
  *   PHOTO_BASE_URL     URL pública das fotos (ex.: https://fotos.quemvotardeverdade.com.br/).
  *                      Sem ela, usa o endereço público r2.dev do bucket.
@@ -142,16 +143,15 @@ if (!photoBase) {
 
 // ---------------------------------------------------------------- build
 step("Build");
-execFileSync("npm", ["run", "build"], { cwd: ROOT, stdio: "inherit", env: { ...process.env, VITE_PHOTO_BASE_URL: photoBase ?? "" } });
+execFileSync("npm", ["run", "build"], { cwd: ROOT, stdio: "inherit", env: { ...process.env, VITE_PHOTO_BASE_URL: photoBase ?? "none" } });
+if (!photoBase) console.log("  (sem fotos do TSE nesta publicação: o R2 ainda não está configurado)");
 rmSync(join(ROOT, "dist/fotos"), { recursive: true, force: true }); // as fotos ficam no R2
 const count = (d) => readdirSync(d, { withFileTypes: true }).reduce((n, e) => n + (e.isDirectory() ? count(join(d, e.name)) : 1), 0);
 console.log(`  ${count(join(ROOT, "dist"))} arquivos em dist/ (limite do plano gratuito: 20.000)`);
 
-// ---------------------------------------------------------------- Pages
-step(`Pages "${PROJECT}"`);
-const projects = (await api(token, `/accounts/${account.id}/pages/projects`)).result ?? [];
-if (!projects.some((p) => p.name === PROJECT)) {
-  wrangler(["pages", "project", "create", PROJECT, "--production-branch", "main"], { inherit: true });
-}
-wrangler(["pages", "deploy", "dist", "--project-name", PROJECT, "--branch", "main", "--commit-dirty=true"], { inherit: true });
-console.log(`\n✓ Publicado: https://${PROJECT}.pages.dev`);
+// ---------------------------------------------------------------- publicação (Workers static assets = novo Pages)
+step(`Publicando "${PROJECT}"`);
+const out = execFileSync("npx", ["wrangler", "deploy", "--name", PROJECT], { cwd: ROOT, encoding: "utf8", env: process.env });
+process.stdout.write(out);
+const url = out.match(/https:\/\/\S+\.workers\.dev/)?.[0];
+console.log(`\n✓ Publicado${url ? `: ${url}` : ""}`);

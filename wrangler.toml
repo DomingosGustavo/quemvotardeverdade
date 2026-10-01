@@ -1,4 +1,8 @@
-# Cloudflare Pages — site estático. As fotos ficam no R2 (veja scripts/deploy-cloudflare.mjs).
+# Cloudflare Workers com arquivos estáticos (a nova versão do Cloudflare Pages).
+# O site não tem código de servidor: tudo em dist/ é servido direto da borda, de graça.
+# As fotos ficam no R2 (veja scripts/deploy-cloudflare.mjs).
 name = "quemvotardeverdade"
-pages_build_output_dir = "dist"
 compatibility_date = "2026-10-01"
+
+[assets]
+directory = "./dist"

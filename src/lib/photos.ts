@@ -9,6 +9,8 @@
  * Não dá para ler direto do TSE no navegador: o CDN responde
  * "Access-Control-Allow-Origin: *, *" (cabeçalho duplicado) e o navegador bloqueia.
  */
-const BASE = (import.meta.env.VITE_PHOTO_BASE_URL as string | undefined)?.replace(/\/?$/, "/") ?? `${import.meta.env.BASE_URL}fotos/`;
+const RAW = import.meta.env.VITE_PHOTO_BASE_URL as string | undefined;
+/** "none" = publicado sem as fotos do TSE (mostra a foto da Câmara/Senado, quando houver, ou as iniciais). */
+const BASE = RAW === "none" ? null : RAW ? RAW.replace(/\/?$/, "/") : `${import.meta.env.BASE_URL}fotos/`;
 
-export const photoUrl = (candidateId: string) => `${BASE}${candidateId}.webp`;
+export const photoUrl = (candidateId: string): string | null => (BASE ? `${BASE}${candidateId}.webp` : null);

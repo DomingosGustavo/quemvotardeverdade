@@ -199,7 +199,7 @@ for (const c of tse.candidatos) {
       withVotes++;
       for (const [q, e] of Object.entries(agg.ev)) (ev[q] ??= []).push(...e);
     }
-    parlOut = { casa: parl.casa, id: parl.id, nome: parl.nome, foto: parl.foto ?? null };
+    parlOut = { casa: parl.casa, id: parl.id, nome: parl.nome, foto: parl.foto?.replace(/^http:/, "https:") ?? null };
   }
   const cur = curatedMap[c.id];
   if (cur) {
@@ -255,7 +255,7 @@ for (const p of parls) {
     nome: p.nome,
     p: canonParty(p.partido),
     uf: p.uf,
-    foto: p.foto ?? null,
+    foto: p.foto?.replace(/^http:/, "https:") ?? null,
     cand: linkedParl.get(key) ?? null,
     ...(linkedParl.has(key) && withPhoto.has(linkedParl.get(key)!) ? { ft: 1 } : {}),
     ev: agg.ev,
