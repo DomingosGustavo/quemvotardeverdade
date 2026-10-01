@@ -1,0 +1,22 @@
+[
+  {"id":"privatizacoes","tema":"Economia","titulo":"Privatizações","texto":"Empresas estatais como Correios e Petrobras devem ser privatizadas.","eixo":"economico","sinal":1},
+  {"id":"impostos_ricos","tema":"Economia","titulo":"Impostos sobre os mais ricos","texto":"Quem ganha muito deve pagar mais imposto: taxar altas rendas, lucros e dividendos, fundos exclusivos e offshores.","eixo":"economico","sinal":-1},
+  {"id":"corte_gastos","tema":"Economia","titulo":"Corte de gastos","texto":"O governo deve cortar gastos para equilibrar as contas, mesmo que isso reduza investimentos em programas sociais.","eixo":"economico","sinal":1},
+  {"id":"clt","tema":"Trabalho","titulo":"Leis trabalhistas","texto":"As regras da CLT devem ser flexibilizadas, dando mais espaço à negociação direta entre empresa e trabalhador.","eixo":"economico","sinal":1},
+  {"id":"escala_6x1","tema":"Trabalho","titulo":"Fim da escala 6x1","texto":"A jornada máxima de trabalho deve ser reduzida por lei, acabando com a escala 6x1.","eixo":"economico","sinal":-1},
+  {"id":"programas_sociais","tema":"Economia","titulo":"Transferência de renda","texto":"Programas de transferência de renda, como o Bolsa Família, devem ser ampliados.","eixo":"economico","sinal":-1},
+  {"id":"agro_ambiente","tema":"Meio ambiente","titulo":"Licenciamento ambiental","texto":"O licenciamento ambiental deve ser simplificado para acelerar obras e a expansão do agronegócio, mesmo com menos exigências de proteção.","eixo":"economico","sinal":1},
+  {"id":"prioridade_clima","tema":"Meio ambiente","titulo":"Floresta e clima","texto":"Proteger florestas e combater a mudança climática deve ser prioridade, mesmo que isso reduza o crescimento econômico de algumas regiões.","eixo":"economico","sinal":-1},
+  {"id":"marco_temporal","tema":"Meio ambiente","titulo":"Marco temporal","texto":"Terras indígenas só devem ser demarcadas se estivessem ocupadas pelos povos indígenas em 5 de outubro de 1988 (tese do marco temporal).","eixo":"social","sinal":1},
+  {"id":"aborto","tema":"Costumes","titulo":"Aborto","texto":"O aborto nas primeiras semanas de gestação deve deixar de ser crime.","eixo":"social","sinal":-1},
+  {"id":"drogas","tema":"Costumes","titulo":"Maconha","texto":"O porte de maconha para uso pessoal não deve ser tratado como crime.","eixo":"social","sinal":-1},
+  {"id":"casamento_lgbt","tema":"Costumes","titulo":"Casamento homoafetivo","texto":"O casamento civil entre pessoas do mesmo sexo deve continuar garantido.","eixo":"social","sinal":-1},
+  {"id":"religiao_estado","tema":"Costumes","titulo":"Religião e Estado","texto":"Valores cristãos e da família tradicional devem orientar as leis e a educação pública.","eixo":"social","sinal":1},
+  {"id":"cotas","tema":"Igualdade","titulo":"Cotas","texto":"Cotas raciais e sociais em universidades e concursos públicos devem ser mantidas.","eixo":"social","sinal":-1},
+  {"id":"armas","tema":"Segurança","titulo":"Armas","texto":"O acesso do cidadão comum a armas de fogo deve ser facilitado.","eixo":"social","sinal":1},
+  {"id":"penas_duras","tema":"Segurança","titulo":"Penas mais duras","texto":"Penas devem ser mais duras, com menos benefícios como a saída temporária de presos (\"saidinha\").","eixo":"social","sinal":1},
+  {"id":"anistia_8jan","tema":"Instituições","titulo":"Anistia do 8 de janeiro","texto":"Os condenados pelos atos de 8 de janeiro de 2023 devem ser anistiados ou ter as penas reduzidas.","eixo":"social","sinal":1},
+  {"id":"regular_redes","tema":"Instituições","titulo":"Regulação das redes","texto":"As plataformas digitais devem ser regulamentadas e responsabilizadas por conteúdos ilegais e desinformação.","eixo":"social","sinal":-1},
+  {"id":"blindagem","tema":"Instituições","titulo":"Blindagem de parlamentares","texto":"Deputados e senadores só deveriam ser processados criminalmente com autorização do próprio Congresso.","eixo":null,"sinal":0},
+  {"id":"emendas","tema":"Instituições","titulo":"Emendas parlamentares","texto":"O valor das emendas parlamentares deve ser reduzido e sua execução submetida a regras de transparência mais rígidas.","eixo":null,"sinal":0}
+]

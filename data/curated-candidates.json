@@ -1,0 +1,137 @@
+{
+  "_leiame": "Posições curadas de candidatos com trajetória pública ampla (declarações, atos de governo, votos e programas). v: -1 (discorda totalmente) a +1 (concorda totalmente). c: confiança editorial — 'alta' (posição explícita e reiterada), 'media' (indícios consistentes), 'baixa' (inferência). Candidatos sem entrada aqui usam a posição do partido e, se forem parlamentares, os próprios votos nominais. Toda correção deve vir com fonte (link) via pull request.",
+  "candidatos": {
+    "280002542548": {
+      "nome": "Lula (PT)",
+      "base": "Atos do governo 2023–2026, vetos, declarações públicas e programa da coligação.",
+      "posicoes": {
+        "privatizacoes":     { "v": -1,   "c": "alta",  "nota": "Retirou Correios, Petrobras e outras estatais do programa de desestatização em 2023." },
+        "impostos_ricos":    { "v": 1,    "c": "alta",  "nota": "Governo propôs tributar fundos exclusivos e offshores (2023) e altas rendas para compensar a isenção do IR até R$ 5 mil (2025)." },
+        "corte_gastos":      { "v": -0.5, "c": "media", "nota": "Criou o arcabouço fiscal e um pacote de contenção (2024), mas defende preservar gastos sociais." },
+        "clt":               { "v": -0.5, "c": "media", "nota": "Critica a reforma trabalhista de 2017; não propôs sua revogação integral." },
+        "escala_6x1":        { "v": 0.5,  "c": "media", "nota": "Declarou apoio à redução da jornada; o tema foi tratado com cautela pelo governo." },
+        "programas_sociais": { "v": 1,    "c": "alta",  "nota": "Relançou e ampliou o Bolsa Família." },
+        "agro_ambiente":     { "v": -0.5, "c": "media", "nota": "Vetou trechos da nova lei de licenciamento (2025); mantém relação próxima com parte do agro." },
+        "prioridade_clima":  { "v": 0.5,  "c": "media", "nota": "Meta de desmatamento zero e COP30, mas apoia exploração de petróleo na Margem Equatorial." },
+        "marco_temporal":    { "v": -1,   "c": "alta",  "nota": "Vetou o marco temporal aprovado pelo Congresso em 2023." },
+        "aborto":            { "v": -0.5, "c": "media", "nota": "Diz ser pessoalmente contra o aborto e trata o tema como saúde pública; não propôs descriminalizar." },
+        "drogas":            { "v": 0,    "c": "baixa", "nota": "Evita se posicionar; governo não apoiou a PEC das drogas nem propôs descriminalização." },
+        "casamento_lgbt":    { "v": 1,    "c": "alta",  "nota": "Defende direitos da população LGBT." },
+        "religiao_estado":   { "v": -0.5, "c": "media", "nota": "Defende Estado laico, com acenos a eleitores religiosos." },
+        "cotas":             { "v": 1,    "c": "alta",  "nota": "Sancionou a renovação da Lei de Cotas (2023)." },
+        "armas":             { "v": -1,   "c": "alta",  "nota": "Decretos de 2023 restringiram acesso a armas e CACs." },
+        "penas_duras":       { "v": -0.5, "c": "media", "nota": "Vetou parte do fim da 'saidinha' (visita à família); veto derrubado pelo Congresso." },
+        "anistia_8jan":      { "v": -1,   "c": "alta",  "nota": "Contrário à anistia aos condenados do 8 de janeiro." },
+        "regular_redes":     { "v": 1,    "c": "alta",  "nota": "Governo defende regulação das plataformas digitais." },
+        "blindagem":         { "v": -1,   "c": "media", "nota": "Criticou publicamente a PEC da Blindagem (2025)." },
+        "emendas":           { "v": 0.5,  "c": "media", "nota": "Governo defende mais transparência nas emendas; depende delas para governabilidade." }
+      }
+    },
+    "280002551544": {
+      "nome": "Flávio Bolsonaro (PL)",
+      "base": "Votos no Senado (quando disponíveis), declarações públicas e posições do PL.",
+      "posicoes": {
+        "privatizacoes":     { "v": 1,    "c": "media", "nota": "Defende a agenda de privatizações do governo Bolsonaro." },
+        "impostos_ricos":    { "v": -0.5, "c": "media", "nota": "Apoia isenção do IR, mas critica aumento de tributos sobre investimentos e altas rendas." },
+        "corte_gastos":      { "v": 1,    "c": "media", "nota": "Defende redução de gastos públicos." },
+        "clt":               { "v": 1,    "c": "media", "nota": "Apoiou a reforma trabalhista e a flexibilização." },
+        "escala_6x1":        { "v": -0.5, "c": "baixa", "nota": "PL se opôs à PEC do fim da escala 6x1 nos termos propostos pela esquerda." },
+        "programas_sociais": { "v": 0,    "c": "baixa", "nota": "Defende manter transferência de renda, com foco em 'porta de saída'." },
+        "agro_ambiente":     { "v": 1,    "c": "alta",  "nota": "Alinhado à bancada ruralista." },
+        "prioridade_clima":  { "v": -1,   "c": "media", "nota": "Crítico de restrições ambientais ao crescimento." },
+        "marco_temporal":    { "v": 1,    "c": "alta",  "nota": "Defende o marco temporal." },
+        "aborto":            { "v": -1,   "c": "alta",  "nota": "Contrário ao aborto." },
+        "drogas":            { "v": -1,   "c": "alta",  "nota": "Favorável à PEC que criminaliza porte de drogas." },
+        "casamento_lgbt":    { "v": -1,   "c": "media", "nota": "Pauta conservadora de costumes." },
+        "religiao_estado":   { "v": 1,    "c": "alta",  "nota": "Defende valores cristãos e família tradicional na política." },
+        "cotas":             { "v": -1,   "c": "media", "nota": "Crítico de cotas raciais." },
+        "armas":             { "v": 1,    "c": "alta",  "nota": "Defensor da flexibilização do acesso a armas." },
+        "penas_duras":       { "v": 1,    "c": "alta",  "nota": "Defende endurecimento penal e o fim da 'saidinha'." },
+        "anistia_8jan":      { "v": 1,    "c": "alta",  "nota": "Um dos principais defensores da anistia aos condenados do 8 de janeiro." },
+        "regular_redes":     { "v": -1,   "c": "alta",  "nota": "Contrário à regulação das plataformas ('PL da censura')." }
+      }
+    },
+    "280002551932": {
+      "nome": "Ronaldo Caiado (PSD)",
+      "base": "Gestão como governador de Goiás (2019–2026), trajetória como senador/deputado e declarações.",
+      "posicoes": {
+        "privatizacoes":     { "v": 1,    "c": "media", "nota": "Privatizou a distribuidora de energia de Goiás (Celg) e defende desestatização." },
+        "impostos_ricos":    { "v": -1,   "c": "media", "nota": "Contrário a aumento de carga tributária." },
+        "corte_gastos":      { "v": 1,    "c": "media", "nota": "Defende ajuste fiscal; Goiás aderiu ao Regime de Recuperação Fiscal." },
+        "clt":               { "v": 1,    "c": "media", "nota": "Votou a favor da reforma trabalhista quando senador (2017)." },
+        "agro_ambiente":     { "v": 1,    "c": "alta",  "nota": "Liderança histórica do setor ruralista (fundador da UDR)." },
+        "prioridade_clima":  { "v": -0.5, "c": "media", "nota": "Prioriza produção agropecuária." },
+        "marco_temporal":    { "v": 1,    "c": "alta",  "nota": "Defensor do marco temporal." },
+        "aborto":            { "v": -1,   "c": "alta",  "nota": "Contrário ao aborto." },
+        "drogas":            { "v": -1,   "c": "alta",  "nota": "Contrário à descriminalização." },
+        "religiao_estado":   { "v": 0.5,  "c": "media", "nota": "Discurso conservador de costumes." },
+        "armas":             { "v": 1,    "c": "media", "nota": "Favorável ao acesso a armas pelo cidadão." },
+        "penas_duras":       { "v": 1,    "c": "alta",  "nota": "Segurança pública linha-dura é a principal marca do governo em Goiás." },
+        "anistia_8jan":      { "v": 0.5,  "c": "media", "nota": "Declarou apoio à anistia/revisão de penas." },
+        "regular_redes":     { "v": -0.5, "c": "baixa", "nota": "Crítico de 'censura' nas redes." }
+      }
+    },
+    "280002539826": {
+      "nome": "Romeu Zema (NOVO)",
+      "base": "Gestão como governador de Minas Gerais (2019–2026), programa do NOVO e declarações.",
+      "posicoes": {
+        "privatizacoes":     { "v": 1,    "c": "alta",  "nota": "Defende privatizar Cemig e Copasa; agenda liberal." },
+        "impostos_ricos":    { "v": -1,   "c": "alta",  "nota": "Contrário a aumento de impostos." },
+        "corte_gastos":      { "v": 1,    "c": "alta",  "nota": "Bandeira central: Estado enxuto e corte de gastos." },
+        "clt":               { "v": 1,    "c": "alta",  "nota": "Defende flexibilização trabalhista." },
+        "escala_6x1":        { "v": -1,   "c": "media", "nota": "Criticou a PEC do fim da 6x1 por impacto no emprego." },
+        "programas_sociais": { "v": -0.5, "c": "media", "nota": "Defende focalização e 'porta de saída', não ampliação." },
+        "agro_ambiente":     { "v": 1,    "c": "media", "nota": "Defende desburocratizar licenciamento." },
+        "aborto":            { "v": -1,   "c": "alta",  "nota": "Contrário ao aborto." },
+        "drogas":            { "v": -1,   "c": "media", "nota": "Contrário à descriminalização." },
+        "cotas":             { "v": -1,   "c": "media", "nota": "Crítico de cotas raciais." },
+        "armas":             { "v": 1,    "c": "media", "nota": "Favorável ao direito à legítima defesa armada." },
+        "penas_duras":       { "v": 1,    "c": "alta",  "nota": "Defende endurecimento penal." },
+        "anistia_8jan":      { "v": 1,    "c": "media", "nota": "Declarou apoio à anistia." },
+        "regular_redes":     { "v": -1,   "c": "alta",  "nota": "Contrário à regulação das redes." },
+        "blindagem":         { "v": -1,   "c": "media", "nota": "NOVO votou contra a PEC da Blindagem." },
+        "emendas":           { "v": 1,    "c": "media", "nota": "Critica emendas parlamentares e defende transparência." }
+      }
+    },
+    "280002553884": {
+      "nome": "Pablo Marçal (PRTB)",
+      "base": "Campanha à Prefeitura de São Paulo (2024) e declarações públicas.",
+      "posicoes": {
+        "privatizacoes":     { "v": 1,    "c": "media", "nota": "Discurso pró-mercado e de Estado mínimo." },
+        "impostos_ricos":    { "v": -1,   "c": "media", "nota": "Contrário a aumento de impostos." },
+        "corte_gastos":      { "v": 1,    "c": "media", "nota": "Defende Estado enxuto." },
+        "clt":               { "v": 1,    "c": "media", "nota": "Discurso de empreendedorismo e flexibilização." },
+        "aborto":            { "v": -1,   "c": "alta",  "nota": "Contrário ao aborto." },
+        "drogas":            { "v": -1,   "c": "media", "nota": "Contrário à descriminalização." },
+        "religiao_estado":   { "v": 1,    "c": "media", "nota": "Forte apelo ao eleitorado cristão." },
+        "armas":             { "v": 1,    "c": "media", "nota": "Favorável a armas para defesa pessoal." },
+        "penas_duras":       { "v": 1,    "c": "media", "nota": "Discurso linha-dura em segurança." },
+        "regular_redes":     { "v": -1,   "c": "alta",  "nota": "Contrário à regulação das redes." }
+      }
+    },
+    "280002540694": {
+      "nome": "Renan Santos (MISSÃO)",
+      "base": "Trajetória no MBL, programa do Partido Missão e declarações públicas.",
+      "posicoes": {
+        "privatizacoes":     { "v": 1,    "c": "alta",  "nota": "Defende privatizações amplas." },
+        "impostos_ricos":    { "v": -1,   "c": "media", "nota": "Contrário a aumento de impostos." },
+        "corte_gastos":      { "v": 1,    "c": "alta",  "nota": "Defende ajuste fiscal e Estado menor." },
+        "clt":               { "v": 1,    "c": "media", "nota": "Pró-flexibilização trabalhista." },
+        "cotas":             { "v": -1,   "c": "media", "nota": "MBL historicamente crítico de cotas raciais." },
+        "penas_duras":       { "v": 1,    "c": "alta",  "nota": "Segurança pública linha-dura é pauta central da campanha." },
+        "anistia_8jan":      { "v": -0.5, "c": "baixa", "nota": "MBL rompeu com o bolsonarismo; crítico à anistia ampla." },
+        "blindagem":         { "v": -1,   "c": "alta",  "nota": "Fez campanha pública contra a PEC da Blindagem." },
+        "emendas":           { "v": 1,    "c": "alta",  "nota": "Critica emendas parlamentares ('orçamento secreto')." }
+      }
+    },
+    "280002551547": {
+      "nome": "Augusto Cury (AVANTE)",
+      "base": "Declarações públicas; poucas posições programáticas conhecidas (confiança baixa).",
+      "posicoes": {
+        "aborto":            { "v": -1,   "c": "media", "nota": "Declara-se contrário ao aborto." },
+        "drogas":            { "v": -1,   "c": "media", "nota": "Psiquiatra, critica a liberação de drogas." },
+        "blindagem":         { "v": -1,   "c": "baixa", "nota": "Discurso de renovação ética da política." }
+      }
+    }
+  }
+}

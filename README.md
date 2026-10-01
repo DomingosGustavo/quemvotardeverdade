@@ -1,0 +1,61 @@
+# Quem Votar de Verdade
+
+Comparador eleitoral **de código aberto** para as Eleições Gerais de 2026. Você responde 20 afirmações; o site calcula sua afinidade com candidatos a presidente, governador, senador e deputado — e mostra **por que**, tema a tema, com a fonte.
+
+- **Votos reais**: para quem está no Congresso, a posição vem de votações nominais da Câmara e do Senado ligadas a cada pergunta.
+- **Tema por tema**: nada de reduzir você a um ponto numa régua esquerda–direita. A afinidade é calculada em todas as dimensões, com o peso que você escolher.
+- **Incerteza honesta**: cada resultado tem uma faixa de pior/melhor caso. Falta de informação não é tratada como discordância.
+- **Privacidade**: tudo roda no navegador. Sem cadastro, sem anúncios, sem rastreamento. O link de compartilhamento codifica as respostas na própria URL.
+- **Auditável**: as fórmulas estão em [`METODOLOGIA.md`](METODOLOGIA.md) e em [`src/lib/engine.ts`](src/lib/engine.ts), cobertas por testes.
+
+## Rodando localmente
+
+```bash
+npm install
+npm run dev        # http://localhost:5173
+npm test           # testes da matemática
+npm run build      # site estático em dist/ (pode ir para qualquer hospedagem estática)
+```
+
+Os dados já gerados estão em `public/data/`, então o site funciona sem baixar nada.
+
+## Regerando os dados
+
+```bash
+npm run data       # = data:votos + data:candidatos + data:build
+```
+
+| Etapa | Script | Fonte |
+|---|---|---|
+| Votos nominais e parlamentares | `scripts/fetch-votes.mjs` | API de Dados Abertos da Câmara e do Senado |
+| Candidaturas 2026 | `scripts/build-candidates.mjs` | Portal de Dados Abertos do TSE (`consulta_cand_2026.zip`) |
+| Arquivos do site | `scripts/build-data.ts` | junta tudo usando o mesmo `engine.ts` do navegador |
+
+O CPF que vem na base do TSE e na API da Câmara é usado **apenas** offline, para vincular candidatos a parlamentares. Ele não é publicado em `public/data`.
+
+## Estrutura
+
+```
+data/
+  questions.json            perguntas (texto, eixo, sinal)
+  rollcalls.json            votações nominais ↔ perguntas (direção, peso, justificativa)
+  ROLLCALLS.md              a mesma lista em formato legível
+  parties.json              posições editoriais dos partidos (usadas só sem votação)
+  curated-candidates.json   posições documentadas de alguns candidatos (com nota)
+scripts/                    pipeline de dados
+src/lib/engine.ts           TODA a matemática
+src/lib/engine.test.ts      propriedades verificadas
+src/pages/                  Início, Questionário, Resultado, Metodologia, Dados, Cola
+```
+
+## Como contribuir
+
+- **Discorda de uma posição editorial?** Edite `data/parties.json` ou `data/curated-candidates.json` com o link da fonte e abra um PR.
+- **Conhece uma votação nominal relevante?** Acrescente em `data/rollcalls.json` (id da votação, direção, peso e justificativa) e rode `npm run data`.
+- **Achou um problema na matemática?** Escreva um teste em `src/lib/engine.test.ts` que o demonstre.
+
+## Licença
+
+[AGPL-3.0-or-later](LICENSE). Dados públicos de TSE, Câmara dos Deputados e Senado Federal.
+
+Afinidade não é recomendação de voto.

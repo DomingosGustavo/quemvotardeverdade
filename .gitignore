@@ -1,0 +1,7 @@
+node_modules
+dist
+# dados brutos (contêm CPF usado só para vincular candidatos a parlamentares)
+data/raw/
+*.log
+.DS_Store
+*.tsbuildinfo
