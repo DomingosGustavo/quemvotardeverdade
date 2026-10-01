@@ -15,7 +15,8 @@
     "data:build": "node scripts/build-data.ts",
     "data": "npm run data:votos && npm run data:candidatos && npm run data:fotos && npm run data:build",
     "data:fotos": "node scripts/fetch-photos.mjs",
-    "data:proporcional": "node scripts/build-proportional.mjs"
+    "data:proporcional": "node scripts/build-proportional.mjs",
+    "deploy": "node scripts/deploy-cloudflare.mjs"
   },
   "dependencies": {
     "@fontsource-variable/fraunces": "^5.3.0",
@@ -33,6 +34,7 @@
     "tailwindcss": "^4.3.3",
     "typescript": "^7.0.2",
     "vite": "^8.3.2",
-    "vitest": "^5.0.3"
+    "vitest": "^5.0.3",
+    "wrangler": "^4.146.0"
   }
 }

@@ -22,6 +22,26 @@ Os dados já gerados estão em `public/data/`, então o site funciona sem baixar
 
 > Por que não carregar as fotos direto do TSE? O CDN do TSE responde com `Access-Control-Allow-Origin: *, *` (cabeçalho duplicado), que os navegadores rejeitam. Por isso as fotos são convertidas e servidas localmente.
 
+## Publicando (Cloudflare Pages + R2, custo zero)
+
+O site é estático. O app (≈50 arquivos, 6 MB) vai para o **Cloudflare Pages**; as ~20 mil fotos vão para um bucket **R2**
+(o plano gratuito do Pages aceita no máximo 20.000 arquivos por site; o R2 tem 10 GB grátis e não cobra tráfego).
+
+```bash
+npx wrangler login       # uma vez: abre o navegador para autorizar sua conta Cloudflare
+npm run data:fotos       # se public/fotos ainda não existir
+npm run deploy           # cria o bucket e o projeto, envia as fotos (só as novas) e publica o site
+npm run deploy -- --skip-photos   # atualizações seguintes, só o site
+```
+
+Antes do primeiro deploy, ative o R2 no painel da Cloudflare (R2 → "Começar"); a Cloudflare pede um meio de pagamento
+mesmo para o plano gratuito. O site fica em `https://quemvotardeverdade.pages.dev`.
+
+Domínio próprio: depois de registrar `quemvotardeverdade.com.br` e apontar os DNS para a Cloudflare, adicione o domínio
+em Pages → Custom domains, conecte `fotos.quemvotardeverdade.com.br` ao bucket (R2 → Settings → Custom domains) e publique com
+`PHOTO_BASE_URL=https://fotos.quemvotardeverdade.com.br/ npm run deploy -- --skip-photos`. Enquanto isso, as fotos usam o
+endereço `r2.dev` do bucket, que tem limite de requisições e serve para testes.
+
 ## Regerando os dados
 
 ```bash

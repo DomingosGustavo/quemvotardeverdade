@@ -7,3 +7,4 @@ data/raw/
 *.tsbuildinfo
 # fotos do TSE (geradas por npm run data:fotos)
 public/fotos/
+.wrangler/

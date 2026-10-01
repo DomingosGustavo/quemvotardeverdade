@@ -1,0 +1,4 @@
+# Cloudflare Pages — site estático. As fotos ficam no R2 (veja scripts/deploy-cloudflare.mjs).
+name = "quemvotardeverdade"
+pages_build_output_dir = "dist"
+compatibility_date = "2026-10-01"
