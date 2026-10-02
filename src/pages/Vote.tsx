@@ -28,7 +28,7 @@ export default function Vote() {
 
   return (
     <div className="mx-auto max-w-4xl px-4 pt-12 sm:px-6">
-      <SectionTitle eyebrow="Como seu voto conta" title="Seu voto para deputado não é só do seu candidato">
+      <SectionTitle as="h1" eyebrow="Como seu voto conta" title="Seu voto para deputado não é só do seu candidato">
         Para deputado federal, estadual e distrital, o Brasil usa o sistema proporcional de lista aberta: seu voto vai primeiro para o
         partido ou federação do candidato, que ganha cadeiras de acordo com o total da lista. Só depois as cadeiras vão para os mais
         votados da lista. Por isso, votar em alguém pode ajudar a eleger outra pessoa — inclusive de outro partido da mesma federação.

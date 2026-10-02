@@ -40,6 +40,18 @@ npm run deploy            # roda os testes, faz o build e publica
 Domínio próprio: registre o domínio, aponte os DNS para a Cloudflare e adicione-o em
 Workers & Pages → quemvotardeverdade → Settings → Domains.
 
+## Buscadores (SEO)
+
+O app usa URLs normais (`/quiz`, `/voto`, `/metodo`…). Depois do `vite build`,
+[`scripts/prerender.ts`](scripts/prerender.ts) gera:
+
+- um HTML por página, com título, descrição, canonical, Open Graph e JSON-LD tirados de [`src/seo.ts`](src/seo.ts),
+  e o texto da página já no HTML (lido por buscadores antes de o app carregar);
+- `/candidatos` e `/candidatos/{uf}`: páginas estáticas com todas as candidaturas de cada estado;
+- `sitemap.xml`, `robots.txt`, `og.png` (imagem de compartilhamento) e `apple-touch-icon.png`.
+
+`/resultado` e `/cola` têm `noindex`, porque mostram as respostas de quem as visita.
+
 ## Regerando os dados
 
 ```bash

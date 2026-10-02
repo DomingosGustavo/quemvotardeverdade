@@ -279,7 +279,7 @@ function ListBand({ list, model, meta }: { list: ListContext; model: CardModel; 
                 em {list.ufName}.
               </>
             )}{" "}
-            <a href="#/voto" className="font-medium text-sky hover:underline">Entenda a regra →</a>
+            <a href="/voto" className="font-medium text-sky hover:underline">Entenda a regra →</a>
           </p>
           {withRecord.length > 0 && withRecord.length <= 6 && (
             <div>

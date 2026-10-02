@@ -21,7 +21,7 @@ export default function Method() {
   const { meta } = useStore();
   return (
     <div className="mx-auto max-w-3xl px-4 pt-12 sm:px-6">
-      <SectionTitle eyebrow="Metodologia" title="Como calculamos a afinidade">
+      <SectionTitle as="h1" eyebrow="Metodologia" title="Como calculamos a afinidade">
         Tudo o que está aqui é exatamente o que o código faz (arquivo <RepoFile path="src/lib/engine.ts" />,
         coberto por testes automatizados). Se você achar um erro, a conta pode ser refeita por qualquer pessoa.
       </SectionTitle>

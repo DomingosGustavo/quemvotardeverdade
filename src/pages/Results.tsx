@@ -13,7 +13,7 @@ import {
   type Meta,
   type Parliamentarian,
 } from "../lib/data.ts";
-import { href } from "../lib/router.ts";
+import { href, navigate } from "../lib/router.ts";
 import { decodeAnswers, encodeAnswers, useStore } from "../lib/store.tsx";
 import { CandidateCard, type CardModel, type ListContext } from "../components/CandidateCard.tsx";
 import { elected2022, listKeyOf, listParties, prettyList } from "../lib/lists.ts";
@@ -45,7 +45,7 @@ export default function Results({ params }: { params: URLSearchParams }) {
     );
   }
 
-  const shareUrl = `${location.origin}${location.pathname}#/resultado?r=${encodeAnswers(order, answers)}`;
+  const shareUrl = `${location.origin}/resultado?r=${encodeAnswers(order, answers)}`;
   const userXY = userCoordinates(m.questions, answers);
   const settings = (
     <div className="card p-5">
@@ -70,8 +70,8 @@ export default function Results({ params }: { params: URLSearchParams }) {
         <div className="card mb-6 flex flex-wrap items-center justify-between gap-3 border-gold bg-gold-2/40 p-4">
           <p className="text-sm">Você está vendo um resultado compartilhado por link.</p>
           <div className="flex gap-2">
-            <Button size="sm" variant="secondary" onClick={() => (location.hash = "/resultado")}>Ver o meu</Button>
-            <Button size="sm" onClick={() => { replaceAnswers(sharedAnswers); location.hash = "/resultado"; }}>Usar estas respostas</Button>
+            <Button size="sm" variant="secondary" onClick={() => navigate("/resultado")}>Ver o meu</Button>
+            <Button size="sm" onClick={() => { replaceAnswers(sharedAnswers); navigate("/resultado"); }}>Usar estas respostas</Button>
           </div>
         </div>
       )}

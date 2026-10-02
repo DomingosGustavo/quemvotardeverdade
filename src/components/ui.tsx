@@ -157,11 +157,11 @@ export function Segmented<T extends string | number>({
   );
 }
 
-export function SectionTitle({ eyebrow, title, children }: { eyebrow?: string; title: ReactNode; children?: ReactNode }) {
+export function SectionTitle({ eyebrow, title, children, as: H = "h2" }: { eyebrow?: string; title: ReactNode; children?: ReactNode; as?: "h1" | "h2" }) {
   return (
     <div className="mb-6">
       {eyebrow && <p className="mb-2 text-xs font-semibold uppercase tracking-[0.14em] text-forest-2">{eyebrow}</p>}
-      <h2 className="text-3xl sm:text-4xl font-semibold text-ink">{title}</h2>
+      <H className="text-3xl sm:text-4xl font-semibold text-ink">{title}</H>
       {children && <p className="mt-3 max-w-2xl text-ink-2 leading-relaxed">{children}</p>}
     </div>
   );

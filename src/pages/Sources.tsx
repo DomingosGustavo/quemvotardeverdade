@@ -27,7 +27,7 @@ export default function Sources() {
 
   return (
     <div className="mx-auto max-w-6xl px-4 pt-12 sm:px-6">
-      <SectionTitle eyebrow="Dados e fontes" title="Tudo o que entra na conta">
+      <SectionTitle as="h1" eyebrow="Dados e fontes" title="Tudo o que entra na conta">
         Votações nominais ligadas a cada pergunta, a posição calculada de cada partido e o que é estimativa editorial. Tudo é gerado a partir
         de dados abertos do TSE, da Câmara e do Senado.
       </SectionTitle>

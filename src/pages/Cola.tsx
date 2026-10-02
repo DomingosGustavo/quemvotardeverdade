@@ -16,7 +16,7 @@ export default function Cola() {
   const { cola, toggleCola, meta } = useStore();
   return (
     <div className="mx-auto max-w-2xl px-4 pt-12 sm:px-6">
-      <SectionTitle eyebrow="Minha cola" title="Leve seus números para a urna">
+      <SectionTitle as="h1" eyebrow="Minha cola" title="Leve seus números para a urna">
         Na ordem em que aparecem na urna. É permitido levar papel com anotações na cabine; celular, não. Os dados ficam só no seu navegador.
       </SectionTitle>
       {cola.length === 0 ? (
